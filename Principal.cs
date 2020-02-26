@@ -18,7 +18,6 @@ namespace PermeametroApp
         public IServico servico;
         public Configuracao configuracao { get; set; }
 
-        public Configuracoes configuracoes { get; set; }
         public SerialPort port { get; set; }
         private bool statusAlter { get; set; }
         private List<Monitoracao> monitoracoes { get; set; }
@@ -26,26 +25,23 @@ namespace PermeametroApp
         public Principal(IServico servico)
         {
             this.servico = servico;
-
             InitializeComponent();
         }
 
         protected override void OnLoad(EventArgs e)
         {
-            // do stuff before Load-event is raised
             base.OnLoad(e);
-            // do stuff after Load-event was raised
-            configuracoes = new Configuracoes();
-            configuracoes.Carregar();
-            var conf = servico.Configuracoes.Carregar();
-            CarregarConfiguracoesDeComponentes(conf, true);
-            InicializaTimer();
 
+            configuracao = servico.Configuracoes.Carregar();
+            if(configuracao != null)
+            {
+                CarregarConfiguracoesDeComponentes(configuracao, true);
+            }
+            
+            InicializaTimer();
             butStop.Enabled = false;
             butGerarPlanilha.Enabled = false;
             statusAlter = false;
-
-            
         }
 
 
@@ -62,7 +58,7 @@ namespace PermeametroApp
         {
             timer1.Stop();
             var tempoInicial = DateTime.Now;
-            var escravos = configuracoes.holdingRegisters
+            var escravos = configuracao.holdingRegisters
                                         .Select((x, i) => new { Index = i, Value = x })
                                         .GroupBy(x => x.Value.idEscravo)
                                         .Select(x => x.Select(v => v.Value).ToList())
@@ -131,7 +127,7 @@ namespace PermeametroApp
 
             var tempoFinal = DateTime.Now;
             var tempoResposta = tempoFinal - tempoInicial;
-            var tempo = Int32.Parse(configuracoes.periodoAtualizacao) - (int)tempoResposta.TotalMilliseconds;
+            var tempo = Int32.Parse(configuracao.periodoAtualizacao) - (int)tempoResposta.TotalMilliseconds;
             timer1.Interval = tempo <= 0 ? 1 : tempo;
             timer1.Start();
         }
@@ -166,7 +162,7 @@ namespace PermeametroApp
             {
                 while (chartD.Series.Count > 0) { chartD.Series.RemoveAt(0); }
                 while (chartE.Series.Count > 0) { chartE.Series.RemoveAt(0); }
-                var escravos = configuracoes.holdingRegisters
+                var escravos = configuracao.holdingRegisters
                                  .Select((x, i) => new { Index = i, Value = x })
                                  .GroupBy(x => x.Value.idEscravo)
                                  .Select(x => x.Select(v => v.Value).ToList())
@@ -290,33 +286,45 @@ namespace PermeametroApp
 
         private void btnSalvar_Click(object sender, EventArgs e)
         {
-            if (ValidaDados())
+            try
             {
-                configuracoes.porta = textPorta.Text;
-                configuracoes.baudRate = textBaudRate.Text;
-                configuracoes.dataBits = texDataBits.Text;
-                configuracoes.stopBit = textStopBits.Text;
-                configuracoes.paridade = textParidade.Text;
-                configuracoes.periodoAtualizacao = textPeriodoAtualizacao.Text;
-                configuracoes.exportarAposParar = checkExport.Checked;
-                configuracoes.pastaExportacao = textPastaExportacao.Text;
-
-                configuracoes.holdingRegisters = new List<HoldingRegisters>();
-
-                foreach (ListViewItem item in listView1.Items)
+                if (ValidaDados())
                 {
-                    configuracoes.holdingRegisters.Add(new HoldingRegisters()
+                    if(configuracao == null)
                     {
-                        nome = item.SubItems[0].Text,
-                        idEscravo = item.SubItems[1].Text,
-                        offSet = item.SubItems[2].Text,
-                        modoGrafico = item.SubItems[3].Text,
-                        multiplicador = Int32.Parse(item.SubItems[4].Text),
-                        somador = Int32.Parse(item.SubItems[5].Text)
-                    });
-                }
+                        configuracao = new Configuracao();
+                    }
+                    configuracao.porta = textPorta.Text;
+                    configuracao.baudRate = textBaudRate.Text;
+                    configuracao.dataBits = texDataBits.Text;
+                    configuracao.stopBit = textStopBits.Text;
+                    configuracao.paridade = textParidade.Text;
+                    configuracao.periodoAtualizacao = textPeriodoAtualizacao.Text;
+                    configuracao.exportarAposParar = checkExport.Checked;
+                    configuracao.pastaExportacao = textPastaExportacao.Text;
 
-                configuracoes.Salvar();
+                    configuracao.holdingRegisters = new List<HoldingRegisters>();
+                    foreach (ListViewItem item in listView1.Items)
+                    {
+                        configuracao.holdingRegisters.Add(new HoldingRegisters()
+                        {
+                            nome = item.SubItems[0].Text,
+                            idEscravo = item.SubItems[1].Text,
+                            offSet = item.SubItems[2].Text,
+                            modoGrafico = item.SubItems[3].Text,
+                            multiplicador = Int32.Parse(item.SubItems[4].Text),
+                            somador = Int32.Parse(item.SubItems[5].Text)
+                        });
+                    }
+                    if (!servico.Configuracoes.Salvar(configuracao))
+                    {
+                        MessageBox.Show("Erro ao salvar configurações" , "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao salvar configurações" + ex.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -346,7 +354,8 @@ namespace PermeametroApp
 
         private void btnCancelar_Click(object sender, EventArgs e)
         {
-            CarregarConfiguracoesDeComponentes(false);
+            var conf = servico.Configuracoes.Carregar();
+            CarregarConfiguracoesDeComponentes(conf, false);
             textRegNome.Text = "";
             textRegEscravo.Text = "";
             textRegOffset.Text = "";
@@ -392,18 +401,18 @@ namespace PermeametroApp
 
         private void CarregarConfiguracoesDeComponentes(Configuracao configuracao, bool registerToo)
         {
-            textPorta.Text = configuracoes.porta;
-            textBaudRate.Text = configuracoes.baudRate;
-            texDataBits.Text = configuracoes.dataBits;
-            textStopBits.Text = configuracoes.stopBit;
-            textParidade.Text = configuracoes.paridade;
-            textPeriodoAtualizacao.Text = configuracoes.periodoAtualizacao;
-            checkExport.Checked = configuracoes.exportarAposParar;
-            textPastaExportacao.Text = configuracoes.pastaExportacao;
+            textPorta.Text = configuracao.porta;
+            textBaudRate.Text = configuracao.baudRate;
+            texDataBits.Text = configuracao.dataBits;
+            textStopBits.Text = configuracao.stopBit;
+            textParidade.Text = configuracao.paridade;
+            textPeriodoAtualizacao.Text = configuracao.periodoAtualizacao;
+            checkExport.Checked = configuracao.exportarAposParar;
+            textPastaExportacao.Text = configuracao.pastaExportacao;
 
-            if (registerToo)
+            if (registerToo && configuracao.holdingRegisters != null)
             {
-                foreach (HoldingRegisters holdingRegister in configuracoes.holdingRegisters)
+                foreach (HoldingRegisters holdingRegister in configuracao.holdingRegisters)
                 {
                     string[] row = {
                             holdingRegister.nome,
@@ -459,7 +468,7 @@ namespace PermeametroApp
                 });
 
                 relatorio = relatorio.Replace("%%" + --cont, Environment.NewLine);
-                var arquivo = configuracoes.pastaExportacao + "\\" + textColeta.Text + ".csv";
+                var arquivo = configuracao.pastaExportacao + "\\" + textColeta.Text + ".csv";
                 File.WriteAllText(arquivo, relatorio);
             }
             catch (Exception ex)
@@ -476,11 +485,11 @@ namespace PermeametroApp
         {
             if (port == null)
             {
-                port = new SerialPort(configuracoes.porta);
-                port.BaudRate = Int32.Parse(configuracoes.baudRate);
-                port.DataBits = Int32.Parse(configuracoes.dataBits);
-                port.Parity = (Parity)Int32.Parse(configuracoes.paridade);
-                port.StopBits = (StopBits)Int32.Parse(configuracoes.stopBit);
+                port = new SerialPort(configuracao.porta);
+                port.BaudRate = Int32.Parse(configuracao.baudRate);
+                port.DataBits = Int32.Parse(configuracao.dataBits);
+                port.Parity = (Parity)Int32.Parse(configuracao.paridade);
+                port.StopBits = (StopBits)Int32.Parse(configuracao.stopBit);
                 port.ReadTimeout = 5000; //TODO: Testar
             }
             if (!port.IsOpen)

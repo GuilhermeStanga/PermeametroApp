@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PermeametroApp.Entidades;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,6 @@ namespace PermeametroApp.Servicos.Interfaces
 {
     public interface IRelatorio
     {
+        bool Exportar(Monitoracao monitoracoes);
     }
 }
