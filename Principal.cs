@@ -316,15 +316,16 @@ namespace PermeametroApp
                             somador = Int32.Parse(item.SubItems[5].Text)
                         });
                     }
-                    if (!servico.Configuracoes.Salvar(configuracao))
+                    var retorno = servico.Configuracoes.Salvar(configuracao);
+                    if (retorno != null)
                     {
-                        MessageBox.Show("Erro ao salvar configurações" , "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Erro ao salvar configurações, " + retorno, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Erro ao salvar configurações" + ex.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Erro ao salvar configurações, " + ex.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -434,6 +435,12 @@ namespace PermeametroApp
 
         public void ExportarRelatorio()
         {
+            var retorno = servico.Relatorio.Exportar(monitoracoes, configuracao, textColeta.Text);
+            if (retorno != null)
+            {
+                MessageBox.Show(retorno);
+            }
+            /*
             try
             {
                 string relatorio = "";
@@ -474,7 +481,7 @@ namespace PermeametroApp
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-            }
+            }*/
         }
 
         #endregion

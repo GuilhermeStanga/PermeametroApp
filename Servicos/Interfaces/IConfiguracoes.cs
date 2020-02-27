@@ -5,6 +5,6 @@ namespace PermeametroApp.Servicos.Interfaces
     public interface IConfiguracoes
     {
         Configuracao Carregar();
-        bool Salvar(Configuracao configuracao);
+        string Salvar(Configuracao configuracao);
     }
 }

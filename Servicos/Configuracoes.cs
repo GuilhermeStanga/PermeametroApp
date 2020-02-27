@@ -26,7 +26,7 @@ namespace PermeametroApp.Servicos
             return configuracoes;
         }
 
-        public bool Salvar(Configuracao configuracao)
+        public string Salvar(Configuracao configuracao)
         {
             try
             {
@@ -36,11 +36,11 @@ namespace PermeametroApp.Servicos
                     serializer.Serialize(file, configuracao);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return ex.Message;
             }
-            return true;
+            return null;
         }
     }
 }
