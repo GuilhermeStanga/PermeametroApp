@@ -29,19 +29,21 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend8 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageMon = new System.Windows.Forms.TabPage();
-            this.textColeta = new System.Windows.Forms.TextBox();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.label10 = new System.Windows.Forms.Label();
+            this.textColeta = new System.Windows.Forms.TextBox();
+            this.butStart = new System.Windows.Forms.Button();
+            this.butStop = new System.Windows.Forms.Button();
+            this.butGerarPlanilha = new System.Windows.Forms.Button();
             this.chartD = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chartE = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.butGerarPlanilha = new System.Windows.Forms.Button();
-            this.butStop = new System.Windows.Forms.Button();
-            this.butStart = new System.Windows.Forms.Button();
             this.tabPageConf = new System.Windows.Forms.TabPage();
             this.textPastaExportacao = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
@@ -79,11 +81,16 @@
             this.btnSalvar = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
             this.tabControl1.SuspendLayout();
             this.tabPageMon.SuspendLayout();
+            this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartD)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartE)).BeginInit();
             this.tabPageConf.SuspendLayout();
+            this.panel2.SuspendLayout();
+            this.panel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -99,13 +106,10 @@
             // 
             // tabPageMon
             // 
-            this.tabPageMon.Controls.Add(this.textColeta);
-            this.tabPageMon.Controls.Add(this.label10);
-            this.tabPageMon.Controls.Add(this.chartD);
-            this.tabPageMon.Controls.Add(this.chartE);
-            this.tabPageMon.Controls.Add(this.butGerarPlanilha);
-            this.tabPageMon.Controls.Add(this.butStop);
-            this.tabPageMon.Controls.Add(this.butStart);
+            this.tabPageMon.Controls.Add(this.panel3);
+            this.tabPageMon.Controls.Add(this.panel2);
+            this.tabPageMon.Controls.Add(this.statusStrip1);
+            this.tabPageMon.Controls.Add(this.panel1);
             this.tabPageMon.Location = new System.Drawing.Point(4, 22);
             this.tabPageMon.Name = "tabPageMon";
             this.tabPageMon.Padding = new System.Windows.Forms.Padding(3);
@@ -114,30 +118,87 @@
             this.tabPageMon.Text = "Monitorar";
             this.tabPageMon.UseVisualStyleBackColor = true;
             // 
-            // textColeta
+            // statusStrip1
             // 
-            this.textColeta.Location = new System.Drawing.Point(139, 28);
-            this.textColeta.Name = "textColeta";
-            this.textColeta.Size = new System.Drawing.Size(212, 20);
-            this.textColeta.TabIndex = 6;
+            this.statusStrip1.Location = new System.Drawing.Point(3, 435);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(872, 22);
+            this.statusStrip1.TabIndex = 8;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // panel1
+            // 
+            this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.label10);
+            this.panel1.Controls.Add(this.textColeta);
+            this.panel1.Controls.Add(this.butStart);
+            this.panel1.Controls.Add(this.butStop);
+            this.panel1.Controls.Add(this.butGerarPlanilha);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Name = "panel1";
+            this.panel1.Padding = new System.Windows.Forms.Padding(10);
+            this.panel1.Size = new System.Drawing.Size(872, 100);
+            this.panel1.TabIndex = 7;
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(47, 30);
+            this.label10.Location = new System.Drawing.Point(13, 35);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(86, 13);
             this.label10.TabIndex = 5;
             this.label10.Text = "Nome da Coleta:";
             // 
+            // textColeta
+            // 
+            this.textColeta.Location = new System.Drawing.Point(105, 32);
+            this.textColeta.Name = "textColeta";
+            this.textColeta.Size = new System.Drawing.Size(212, 20);
+            this.textColeta.TabIndex = 6;
+            // 
+            // butStart
+            // 
+            this.butStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.butStart.Location = new System.Drawing.Point(429, 29);
+            this.butStart.Name = "butStart";
+            this.butStart.Size = new System.Drawing.Size(139, 23);
+            this.butStart.TabIndex = 0;
+            this.butStart.Text = "Iniciar";
+            this.butStart.UseVisualStyleBackColor = true;
+            this.butStart.Click += new System.EventHandler(this.butStart_Click);
+            // 
+            // butStop
+            // 
+            this.butStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.butStop.Location = new System.Drawing.Point(618, 29);
+            this.butStop.Name = "butStop";
+            this.butStop.Size = new System.Drawing.Size(75, 23);
+            this.butStop.TabIndex = 1;
+            this.butStop.Text = "Parar";
+            this.butStop.UseVisualStyleBackColor = true;
+            this.butStop.Click += new System.EventHandler(this.butStop_Click);
+            // 
+            // butGerarPlanilha
+            // 
+            this.butGerarPlanilha.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.butGerarPlanilha.Location = new System.Drawing.Point(618, 62);
+            this.butGerarPlanilha.Name = "butGerarPlanilha";
+            this.butGerarPlanilha.Size = new System.Drawing.Size(168, 23);
+            this.butGerarPlanilha.TabIndex = 2;
+            this.butGerarPlanilha.Text = "Exportar Captura";
+            this.butGerarPlanilha.UseVisualStyleBackColor = true;
+            this.butGerarPlanilha.Click += new System.EventHandler(this.butGerarPlanilha_Click);
+            // 
             // chartD
             // 
             this.chartD.BorderSkin.BorderColor = System.Drawing.Color.Gray;
-            chartArea1.Name = "ChartArea1";
-            this.chartD.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chartD.Legends.Add(legend1);
-            this.chartD.Location = new System.Drawing.Point(451, 111);
+            chartArea7.Name = "ChartArea1";
+            this.chartD.ChartAreas.Add(chartArea7);
+            legend7.Name = "Legend1";
+            this.chartD.Legends.Add(legend7);
+            this.chartD.Location = new System.Drawing.Point(3, 12);
             this.chartD.Name = "chartD";
             this.chartD.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Bright;
             this.chartD.Size = new System.Drawing.Size(419, 293);
@@ -146,46 +207,16 @@
             // 
             // chartE
             // 
-            chartArea2.Name = "ChartArea1";
-            this.chartE.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chartE.Legends.Add(legend2);
-            this.chartE.Location = new System.Drawing.Point(6, 111);
+            chartArea8.Name = "ChartArea1";
+            this.chartE.ChartAreas.Add(chartArea8);
+            legend8.Name = "Legend1";
+            this.chartE.Legends.Add(legend8);
+            this.chartE.Location = new System.Drawing.Point(16, 12);
             this.chartE.Name = "chartE";
             this.chartE.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Bright;
-            this.chartE.Size = new System.Drawing.Size(405, 293);
+            this.chartE.Size = new System.Drawing.Size(419, 293);
             this.chartE.TabIndex = 3;
             this.chartE.Text = "chartE";
-            // 
-            // butGerarPlanilha
-            // 
-            this.butGerarPlanilha.Location = new System.Drawing.Point(319, 419);
-            this.butGerarPlanilha.Name = "butGerarPlanilha";
-            this.butGerarPlanilha.Size = new System.Drawing.Size(168, 23);
-            this.butGerarPlanilha.TabIndex = 2;
-            this.butGerarPlanilha.Text = "Exportar Captura";
-            this.butGerarPlanilha.UseVisualStyleBackColor = true;
-            this.butGerarPlanilha.Click += new System.EventHandler(this.butGerarPlanilha_Click);
-            // 
-            // butStop
-            // 
-            this.butStop.Location = new System.Drawing.Point(625, 25);
-            this.butStop.Name = "butStop";
-            this.butStop.Size = new System.Drawing.Size(75, 23);
-            this.butStop.TabIndex = 1;
-            this.butStop.Text = "Parar";
-            this.butStop.UseVisualStyleBackColor = true;
-            this.butStop.Click += new System.EventHandler(this.butStop_Click);
-            // 
-            // butStart
-            // 
-            this.butStart.Location = new System.Drawing.Point(423, 25);
-            this.butStart.Name = "butStart";
-            this.butStart.Size = new System.Drawing.Size(139, 23);
-            this.butStart.TabIndex = 0;
-            this.butStart.Text = "Iniciar";
-            this.butStart.UseVisualStyleBackColor = true;
-            this.butStart.Click += new System.EventHandler(this.butStart_Click);
             // 
             // tabPageConf
             // 
@@ -514,6 +545,26 @@
             // 
             this.timer1.Interval = 5000;
             // 
+            // panel2
+            // 
+            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.chartE);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel2.Location = new System.Drawing.Point(3, 103);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(434, 332);
+            this.panel2.TabIndex = 9;
+            // 
+            // panel3
+            // 
+            this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel3.Controls.Add(this.chartD);
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel3.Location = new System.Drawing.Point(441, 103);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(434, 332);
+            this.panel3.TabIndex = 10;
+            // 
             // Principal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -525,10 +576,14 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPageMon.ResumeLayout(false);
             this.tabPageMon.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartD)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartE)).EndInit();
             this.tabPageConf.ResumeLayout(false);
             this.tabPageConf.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -581,6 +636,10 @@
         private System.Windows.Forms.TextBox textSomador;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.TextBox textPastaExportacao;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Panel panel2;
     }
 }
 
