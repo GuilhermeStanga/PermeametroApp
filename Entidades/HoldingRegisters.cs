@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PermeametroApp
+namespace PermeametroApp.Entidades
 {
     public class HoldingRegisters
     {
@@ -8,7 +8,7 @@ namespace PermeametroApp
         public string idEscravo { get; set; }
         public string offSet { get; set; }
         public string modoGrafico { get; set; }
-        public int multiplicador { get; set; }
-        public int somador { get; set; }
+        public float multiplicador { get; set; }
+        public float somador { get; set; }
     }
 }

@@ -2,7 +2,9 @@
 using PermeametroApp.Entidades;
 using PermeametroApp.Servicos.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace PermeametroApp.Servicos
 {
@@ -24,6 +26,15 @@ namespace PermeametroApp.Servicos
                 configuracoes = null;
             }            
             return configuracoes;
+        }
+
+        public List<List<HoldingRegisters>> GetHoldingRegisters(Configuracao configuracao)
+        {
+            return configuracao.holdingRegisters
+                .Select((x, i) => new { Index = i, Value = x })
+                .GroupBy(x => x.Value.idEscravo)
+                .Select(x => x.Select(v => v.Value).ToList())
+                .ToList();
         }
 
         public string Salvar(Configuracao configuracao)

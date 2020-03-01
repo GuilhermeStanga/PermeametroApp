@@ -102,14 +102,10 @@
     <Compile Include="Servicos\Configuracoes.cs" />
     <Compile Include="Servicos\Interfaces\ICominucacaoSerial.cs" />
     <Compile Include="Servicos\Interfaces\IConfiguracoes.cs" />
-    <Compile Include="Servicos\Interfaces\IMonitorar.cs" />
     <Compile Include="Servicos\Interfaces\IRelatorio.cs" />
     <Compile Include="Servicos\Interfaces\IServico.cs" />
-    <Compile Include="Servicos\Interfaces\ITimer.cs" />
-    <Compile Include="Servicos\Monitorar.cs" />
     <Compile Include="Servicos\Relatorio.cs" />
     <Compile Include="Servicos\Servico.cs" />
-    <Compile Include="Servicos\Timer.cs" />
     <EmbeddedResource Include="Principal.resx">
       <DependentUpon>Principal.cs</DependentUpon>
       <SubType>Designer</SubType>

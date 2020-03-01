@@ -1,12 +1,15 @@
-﻿using System;
+﻿using PermeametroApp.Entidades;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO.Ports;
 
 namespace PermeametroApp.Servicos.Interfaces
 {
     public interface ICominucacaoSerial
     {
+        SerialPort CriarPorta(Configuracao configuracao);
+        string AbrirPorta(SerialPort port);
+        bool PortaEstaAberta(SerialPort port);
+        string FecharPorta(SerialPort port);
+        ushort[] LerRegistradoresDeEscravo(List<HoldingRegisters> escravo, SerialPort port);
     }
 }

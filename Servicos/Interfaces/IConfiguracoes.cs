@@ -1,4 +1,5 @@
 ﻿using PermeametroApp.Entidades;
+using System.Collections.Generic;
 
 namespace PermeametroApp.Servicos.Interfaces
 {
@@ -6,5 +7,6 @@ namespace PermeametroApp.Servicos.Interfaces
     {
         Configuracao Carregar();
         string Salvar(Configuracao configuracao);
+        List<List<HoldingRegisters>> GetHoldingRegisters(Configuracao configuracao);
     }
 }

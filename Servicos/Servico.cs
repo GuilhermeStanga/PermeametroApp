@@ -13,19 +13,13 @@ namespace PermeametroApp.Servicos
 
         public IConfiguracoes Configuracoes { get; }
 
-        public IMonitorar Monitorar { get; }
-
         public IRelatorio Relatorio { get; }
-
-        public ITimer Timer { get; }
 
         public Servico()
         {
             ComunicacaoSerial = new ComunicacaoSerial();
             Configuracoes = new Configuracoes();
-            Monitorar = new Monitorar();
             Relatorio = new Relatorio();
-            Timer = new Timer();
         }
     }
 }

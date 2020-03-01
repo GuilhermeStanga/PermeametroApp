@@ -1,12 +1,8 @@
 ﻿using PermeametroApp.Entidades;
-using Modbus.Device;
-using Modbus.Serial;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.IO.Ports;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using PermeametroApp.Servicos.Interfaces;
@@ -44,7 +40,6 @@ namespace PermeametroApp
             statusAlter = false;
         }
 
-
         #region Timer
 
         private void InicializaTimer()
@@ -58,66 +53,55 @@ namespace PermeametroApp
         {
             timer1.Stop();
             var tempoInicial = DateTime.Now;
-            var escravos = configuracao.holdingRegisters
-                                        .Select((x, i) => new { Index = i, Value = x })
-                                        .GroupBy(x => x.Value.idEscravo)
-                                        .Select(x => x.Select(v => v.Value).ToList())
-                                        .ToList();
+            var escravos = servico.Configuracoes.GetHoldingRegisters(configuracao);
+
+            foreach (var series in chartD.Series)
+            {
+                if(series.Points.Count > 0)
+                    series.Points.Last().IsValueShownAsLabel = false;
+            }
+            foreach (var series in chartE.Series)
+            {
+                if (series.Points.Count > 0)
+                    series.Points.Last().IsValueShownAsLabel = false;
+            }
+
             try
             {
-                AbrirPorta();
-                var adapter = new SerialPortAdapter(port);
-                using (IModbusSerialMaster master = ModbusSerialMaster.CreateRtu(adapter))
+                var ret = IniciarComunicacaoSerial();
+                if (ret != null)
                 {
-                    foreach (List<HoldingRegisters> escravo in escravos)
+                    MessageBox.Show(ret);
+                    return;
+                }
+                foreach (List<HoldingRegisters> escravo in escravos)
+                {
+                    int cont = 0;
+                    var dados = servico.ComunicacaoSerial.LerRegistradoresDeEscravo(escravo, port);
+                    escravo.ForEach(es =>
                     {
-                        var idEscravo = escravo.First().idEscravo;
-                        var min = escravo.Min(x => x.offSet);
-                        var max = escravo.Max(x => x.offSet);
-                        ushort limite = ushort.Parse((Int32.Parse(max) + 1).ToString());
-                        int cont = 0;
-                        ushort[] registers;
-                        registers = master.ReadHoldingRegisters(byte.Parse(idEscravo), ushort.Parse(min), limite);
-
-                        foreach (var series in chartD.Series)
-                        {
-                            foreach (var point in series.Points)
-                            {
-                                point.IsValueShownAsLabel = false;
-                            }
-                        }
-                        foreach (var series in chartE.Series)
-                        {
-                            foreach (var point in series.Points)
-                            {
-                                point.IsValueShownAsLabel = false;
-                            }
-                        }
-
-                        escravo.ForEach(es =>
-                        {
-                            var x = monitoracoes.
+                        var x = monitoracoes.
                                 Where(m => m.registrador == es).Single();
 
-                            var dado = new Dado()
-                            {
-                                dataHora = DateTime.Now,
-                                valor = registers[cont] * es.multiplicador + es.somador
-                            };
+                        var valor = (dados[cont] * es.multiplicador + es.somador).ToString();
+                        var dado = new Dado()
+                        {
+                            dataHora = DateTime.Now,
+                            valor = double.Parse(String.Format("{0:0.0000}", valor))
+                        };
 
-                            x.dado.Add(dado);
+                        x.dado.Add(dado);
 
-                            if (es.modoGrafico == "Esquerdo")
-                            {
-                                chartE.Series[es.nome].Points.Add(dado.valor).IsValueShownAsLabel = true;
-                            }
-                            else if (es.modoGrafico == "Direito")
-                            {
-                                chartD.Series[es.nome].Points.Add(dado.valor).IsValueShownAsLabel = true;
-                            }
-                            cont++;
-                        });
-                    }
+                        if (es.modoGrafico == "Esquerdo")
+                        {
+                            chartE.Series[es.nome].Points.Add(dado.valor).IsValueShownAsLabel = true;
+                        }
+                        else if (es.modoGrafico == "Direito")
+                        {
+                            chartD.Series[es.nome].Points.Add(dado.valor).IsValueShownAsLabel = true;
+                        }
+                        cont++;
+                    });
                 }
             }
             catch (Exception ex)
@@ -143,13 +127,10 @@ namespace PermeametroApp
                 MessageBox.Show("Informe um nome para a coleta!");
                 return;
             }
-            try
+            var ret = IniciarComunicacaoSerial();
+            if(ret != null)
             {
-                AbrirPorta();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ret);
                 return;
             }
 
@@ -162,13 +143,9 @@ namespace PermeametroApp
             {
                 while (chartD.Series.Count > 0) { chartD.Series.RemoveAt(0); }
                 while (chartE.Series.Count > 0) { chartE.Series.RemoveAt(0); }
-                var escravos = configuracao.holdingRegisters
-                                 .Select((x, i) => new { Index = i, Value = x })
-                                 .GroupBy(x => x.Value.idEscravo)
-                                 .Select(x => x.Select(v => v.Value).ToList())
-                                 .ToList();
-                
-                if(monitoracoes != null) monitoracoes.Clear();
+                var escravos = servico.Configuracoes.GetHoldingRegisters(configuracao);
+
+                if (monitoracoes != null) monitoracoes.Clear();
                 monitoracoes = new List<Monitoracao>();
                 foreach (List<HoldingRegisters> escravo in escravos)
                 {
@@ -192,12 +169,6 @@ namespace PermeametroApp
                         }
                     });
                 }
-
-                /*monitoracoes.ForEach(m =>
-                {
-                    relatorio.Append(m.registrador.nome);
-                    relatorio.Append(";Tempo;");
-                });*/
                 timer1.Enabled = true;
             }
             catch (Exception ex)
@@ -312,8 +283,8 @@ namespace PermeametroApp
                             idEscravo = item.SubItems[1].Text,
                             offSet = item.SubItems[2].Text,
                             modoGrafico = item.SubItems[3].Text,
-                            multiplicador = Int32.Parse(item.SubItems[4].Text),
-                            somador = Int32.Parse(item.SubItems[5].Text)
+                            multiplicador = float.Parse(item.SubItems[4].Text),
+                            somador = float.Parse(item.SubItems[5].Text)
                         });
                     }
                     var retorno = servico.Configuracoes.Salvar(configuracao);
@@ -440,69 +411,25 @@ namespace PermeametroApp
             {
                 MessageBox.Show(retorno);
             }
-            /*
-            try
-            {
-                string relatorio = "";
-                monitoracoes.ForEach(m =>
-                {
-                    relatorio += m.registrador.nome + ", Tempo,";
-                });
-                relatorio = relatorio.Remove(relatorio.Length - 1);
-                relatorio += Environment.NewLine;
-
-                int cont = 0;
-                monitoracoes.ForEach(m =>
-                {
-                    m.dado.ForEach(d =>
-                    {
-                        var ant = cont - 1;
-                        var strAnt = "%%" + ant;
-                        var index2 = relatorio.IndexOf("%%" + ant);
-                        if (index2 > 0)
-                        {
-                            var tmp = d.valor + "," + d.dataHora + ",%%" + cont;
-                            var size = "%%" + ant;
-                            var relatorioTmp = relatorio.Substring(0, index2) + tmp + relatorio.Substring(index2 + ("%%" + ant).Length);
-                            relatorio = relatorioTmp;
-                        }
-                        else
-                        {
-                            relatorio += d.valor + "," + d.dataHora + ",%%" + cont;
-                        }
-                    });
-                    cont++;
-                });
-
-                relatorio = relatorio.Replace("%%" + --cont, Environment.NewLine);
-                var arquivo = configuracao.pastaExportacao + "\\" + textColeta.Text + ".csv";
-                File.WriteAllText(arquivo, relatorio);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }*/
         }
 
         #endregion
 
         #region Acoes
 
-        public void AbrirPorta()
+        public string IniciarComunicacaoSerial()
         {
-            if (port == null)
+            string ret = null;
+            if(port == null)
             {
-                port = new SerialPort(configuracao.porta);
-                port.BaudRate = Int32.Parse(configuracao.baudRate);
-                port.DataBits = Int32.Parse(configuracao.dataBits);
-                port.Parity = (Parity)Int32.Parse(configuracao.paridade);
-                port.StopBits = (StopBits)Int32.Parse(configuracao.stopBit);
-                port.ReadTimeout = 5000; //TODO: Testar
+                port = servico.ComunicacaoSerial.CriarPorta(configuracao);
             }
-            if (!port.IsOpen)
+
+            if (!servico.ComunicacaoSerial.PortaEstaAberta(port))
             {
-                port.Open();
+                ret = servico.ComunicacaoSerial.AbrirPorta(port);
             }
+            return ret;
         }
 
         public void Parar()
@@ -518,9 +445,12 @@ namespace PermeametroApp
                 ExportarRelatorio();
                 textColeta.Text = "";
             }
-            port.Close();
-            port.Dispose();
-            port = null;
+
+            var ret = servico.ComunicacaoSerial.FecharPorta(port);
+            if(ret != null)
+            {
+                MessageBox.Show(ret);
+            }
         }
 
         #endregion

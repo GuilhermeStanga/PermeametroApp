@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace PermeametroApp
+namespace PermeametroApp.Entidades
 {
     public class Dado
     {
-        public int valor { get; set; }
+        public double valor { get; set; }
         public DateTime dataHora { get; set; }
     }
 }

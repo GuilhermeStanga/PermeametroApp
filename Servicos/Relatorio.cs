@@ -16,9 +16,10 @@ namespace PermeametroApp.Servicos
             try
             {
                 string relatorio = "";
+                string delimitador = ";";
                 monitoracoes.ForEach(m =>
                 {
-                    relatorio += m.registrador.nome + ", Tempo,";
+                    relatorio += m.registrador.nome + delimitador + " Tempo" + delimitador;
                 });
                 relatorio = relatorio.Remove(relatorio.Length - 1);
                 relatorio += Environment.NewLine;
@@ -33,14 +34,14 @@ namespace PermeametroApp.Servicos
                         var index2 = relatorio.IndexOf("%%" + ant);
                         if (index2 > 0)
                         {
-                            var tmp = d.valor + "," + d.dataHora + ",%%" + cont;
+                            var tmp = d.valor + delimitador + d.dataHora + delimitador + "%%" + cont;
                             var size = "%%" + ant;
                             var relatorioTmp = relatorio.Substring(0, index2) + tmp + relatorio.Substring(index2 + ("%%" + ant).Length);
                             relatorio = relatorioTmp;
                         }
                         else
                         {
-                            relatorio += d.valor + "," + d.dataHora + ",%%" + cont;
+                            relatorio += d.valor + delimitador + d.dataHora + delimitador + "%%" + cont;
                         }
                     });
                     cont++;
