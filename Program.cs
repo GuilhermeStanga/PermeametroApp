@@ -19,7 +19,6 @@ namespace PermeametroApp
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Bootstrap();
-            //Application.Run(new Principal());
             Application.Run( container.GetInstance<Principal>() );
         }
 
@@ -30,7 +29,6 @@ namespace PermeametroApp
 
             // Register your types, for instance:
             container.Register<IServico, Servico>(Lifestyle.Singleton);
-            //container.Register<IUserContext, WinFormsUserContext>();
             container.Register<Principal>(Lifestyle.Singleton);
 
             // Optionally verify the container.
