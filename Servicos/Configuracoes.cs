@@ -13,18 +13,11 @@ namespace PermeametroApp.Servicos
         public Configuracao Carregar()
         {
             Configuracao configuracoes = null;
-            try
+            using (StreamReader r = new StreamReader(@"./Configuracoes.json"))
             {
-                using (StreamReader r = new StreamReader(@"./Configuracoes.json"))
-                {
-                    string json = r.ReadToEnd();
-                    configuracoes = JsonConvert.DeserializeObject<Configuracao>(json);
-                }
-            }
-            catch (Exception)
-            {
-                configuracoes = null;
-            }            
+                string json = r.ReadToEnd();
+                configuracoes = JsonConvert.DeserializeObject<Configuracao>(json);
+            }           
             return configuracoes;
         }
 

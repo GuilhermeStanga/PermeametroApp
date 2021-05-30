@@ -27,16 +27,23 @@ namespace PermeametroApp
         {
             base.OnLoad(e);
 
-            configuracao = servico.Configuracoes.Carregar();
-            if(configuracao != null)
+            try
             {
-                CarregarConfiguracoesDeComponentes(configuracao, true);
+                configuracao = servico.Configuracoes.Carregar();
+                if (configuracao != null)
+                {
+                    CarregarConfiguracoesDeComponentes(configuracao, true);
+                }
+
+                InicializaTimer();
+                butStop.Enabled = false;
+                butGerarPlanilha.Enabled = false;
+                statusAlter = false;
             }
-            
-            InicializaTimer();
-            butStop.Enabled = false;
-            butGerarPlanilha.Enabled = false;
-            statusAlter = false;
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         #region Timer
@@ -329,13 +336,20 @@ namespace PermeametroApp
 
         private void btnCancelar_Click(object sender, EventArgs e)
         {
-            var conf = servico.Configuracoes.Carregar();
-            CarregarConfiguracoesDeComponentes(conf, false);
-            textRegNome.Text = "";
-            textRegEscravo.Text = "";
-            textRegOffset.Text = "";
-            textMultiplicador.Text = "";
-            textSomador.Text = "";
+            try
+            {
+                var conf = servico.Configuracoes.Carregar();
+                CarregarConfiguracoesDeComponentes(conf, false);
+                textRegNome.Text = "";
+                textRegEscravo.Text = "";
+                textRegOffset.Text = "";
+                textMultiplicador.Text = "";
+                textSomador.Text = "";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private bool ValidaDadosHoldingRegisters()
