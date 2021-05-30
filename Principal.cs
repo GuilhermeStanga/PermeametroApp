@@ -82,7 +82,7 @@ namespace PermeametroApp
                     var dados = servico.ComunicacaoSerial.LerRegistradoresDeEscravo(escravo, serialPort);
                     escravo.ForEach(es =>
                     {
-                        var x = monitoracoes.Where(m => m.registrador == es).Single();
+                        var x = monitoracoes.Single(m => m.registrador == es);
 
                         var valor = (dados[cont] * es.multiplicador + es.somador).ToString();
                         var dado = new Dado()
@@ -298,6 +298,7 @@ namespace PermeametroApp
                     servico.Configuracoes.Salvar(configuracao);
 
                     servico.ComunicacaoSerial.FecharPorta(serialPort);
+                    serialPort = null;
                 }
                 else
                 {
@@ -354,10 +355,10 @@ namespace PermeametroApp
 
         private bool ValidaDadosHoldingRegisters()
         {
-            if (textRegNome.Text == string.Empty |
-                textRegEscravo.Text == string.Empty |
-                textRegOffset.Text == string.Empty |
-                textMultiplicador.Text == string.Empty |
+            if (textRegNome.Text == string.Empty ||
+                textRegEscravo.Text == string.Empty ||
+                textRegOffset.Text == string.Empty ||
+                textMultiplicador.Text == string.Empty ||
                 textSomador.Text == string.Empty)
             {
                 textRegNome.Focus();
@@ -370,12 +371,12 @@ namespace PermeametroApp
         private bool ValidaDados()
         {
 
-            if (textPorta.Text == string.Empty |
-                textBaudRate.Text == string.Empty |
-                texDataBits.Text == string.Empty |
-                textStopBits.Text == string.Empty |
-                textParidade.Text == string.Empty |
-                textPeriodoAtualizacao.Text == string.Empty |
+            if (textPorta.Text == string.Empty ||
+                textBaudRate.Text == string.Empty ||
+                texDataBits.Text == string.Empty ||
+                textStopBits.Text == string.Empty ||
+                textParidade.Text == string.Empty ||
+                textPeriodoAtualizacao.Text == string.Empty ||
                 textPastaExportacao.Text == string.Empty
                 )
             {
@@ -463,6 +464,7 @@ namespace PermeametroApp
             }
 
             servico.ComunicacaoSerial.FecharPorta(serialPort);
+            serialPort = null;
         }
 
         #endregion

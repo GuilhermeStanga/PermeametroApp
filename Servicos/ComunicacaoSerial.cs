@@ -33,7 +33,6 @@ namespace PermeametroApp.Servicos
             {
                 port.Close();
                 port.Dispose();
-                port = null;
             }
         }
         
