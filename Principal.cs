@@ -13,7 +13,6 @@ namespace PermeametroApp
     {
         public IServico servico;
         public Configuracao configuracao { get; set; }
-
         public SerialPort serialPort { get; set; }
         private bool statusAlter { get; set; }
         private List<Monitoracao> monitoracoes { get; set; }
@@ -223,6 +222,10 @@ namespace PermeametroApp
                     statusAlter = false;
                     btnRegAdd.Text = "Adicionar";
                 }
+                else
+                {
+                    MessageBox.Show("Dados incompletos/inválidos...");
+                }
             }
             catch (Exception ex)
             {
@@ -285,14 +288,13 @@ namespace PermeametroApp
                             somador = float.Parse(item.SubItems[5].Text)
                         });
                     }
-                    var retorno = servico.Configuracoes.Salvar(configuracao);
+                    servico.Configuracoes.Salvar(configuracao);
 
                     servico.ComunicacaoSerial.FecharPorta(serialPort);
-
-                    if (retorno != null)
-                    {
-                        MessageBox.Show("Erro ao salvar configurações, " + retorno, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
+                }
+                else
+                {
+                    MessageBox.Show("Dados incompletos/inválidos...");
                 }
             }
             catch (Exception ex)
@@ -344,7 +346,6 @@ namespace PermeametroApp
                 textMultiplicador.Text == string.Empty |
                 textSomador.Text == string.Empty)
             {
-                MessageBox.Show("Dados incompletos/inválidos...");
                 textRegNome.Focus();
                 return false;
             }
@@ -364,7 +365,6 @@ namespace PermeametroApp
                 textPastaExportacao.Text == string.Empty
                 )
             {
-                MessageBox.Show("Dados incompletos/inválidos...");
                 textRegNome.Focus();
                 return false;
             }
@@ -407,10 +407,13 @@ namespace PermeametroApp
 
         public void ExportarRelatorio()
         {
-            var retorno = servico.Relatorio.Exportar(monitoracoes, configuracao, textColeta.Text);
-            if (retorno != null)
+            try
             {
-                MessageBox.Show(retorno);
+                servico.Relatorio.Exportar(monitoracoes, configuracao, textColeta.Text);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 

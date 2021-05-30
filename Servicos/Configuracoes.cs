@@ -37,21 +37,13 @@ namespace PermeametroApp.Servicos
                 .ToList();
         }
 
-        public string Salvar(Configuracao configuracao)
+        public void Salvar(Configuracao configuracao)
         {
-            try
+            using (StreamWriter file = File.CreateText(@"./Configuracoes.json"))
             {
-                using (StreamWriter file = File.CreateText(@"./Configuracoes.json"))
-                {
-                    JsonSerializer serializer = new JsonSerializer();
-                    serializer.Serialize(file, configuracao);
-                }
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(file, configuracao);
             }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
-            return null;
         }
     }
 }

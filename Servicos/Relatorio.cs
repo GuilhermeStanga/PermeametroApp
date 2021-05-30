@@ -11,51 +11,43 @@ namespace PermeametroApp.Servicos
 {
     public class Relatorio : IRelatorio
     {
-        public string Exportar(List<Monitoracao> monitoracoes, Configuracao configuracao, string nomeArquivo)
+        public void Exportar(List<Monitoracao> monitoracoes, Configuracao configuracao, string nomeArquivo)
         {
-            try
+            string relatorio = "";
+            string delimitador = ";";
+            monitoracoes.ForEach(m =>
             {
-                string relatorio = "";
-                string delimitador = ";";
-                monitoracoes.ForEach(m =>
-                {
-                    relatorio += m.registrador.nome + delimitador + " Tempo" + delimitador;
-                });
-                relatorio = relatorio.Remove(relatorio.Length - 1);
-                relatorio += Environment.NewLine;
+                relatorio += m.registrador.nome + delimitador + " Tempo" + delimitador;
+            });
+            relatorio = relatorio.Remove(relatorio.Length - 1);
+            relatorio += Environment.NewLine;
 
-                int cont = 0;
-                monitoracoes.ForEach(m =>
+            int cont = 0;
+            monitoracoes.ForEach(m =>
+            {
+                m.dado.ForEach(d =>
                 {
-                    m.dado.ForEach(d =>
+                    var ant = cont - 1;
+                    var strAnt = "%%" + ant;
+                    var index2 = relatorio.IndexOf("%%" + ant);
+                    if (index2 > 0)
                     {
-                        var ant = cont - 1;
-                        var strAnt = "%%" + ant;
-                        var index2 = relatorio.IndexOf("%%" + ant);
-                        if (index2 > 0)
-                        {
-                            var tmp = d.valor + delimitador + d.dataHora + delimitador + "%%" + cont;
-                            var size = "%%" + ant;
-                            var relatorioTmp = relatorio.Substring(0, index2) + tmp + relatorio.Substring(index2 + ("%%" + ant).Length);
-                            relatorio = relatorioTmp;
-                        }
-                        else
-                        {
-                            relatorio += d.valor + delimitador + d.dataHora + delimitador + "%%" + cont;
-                        }
-                    });
-                    cont++;
+                        var tmp = d.valor + delimitador + d.dataHora + delimitador + "%%" + cont;
+                        var size = "%%" + ant;
+                        var relatorioTmp = relatorio.Substring(0, index2) + tmp + relatorio.Substring(index2 + ("%%" + ant).Length);
+                        relatorio = relatorioTmp;
+                    }
+                    else
+                    {
+                        relatorio += d.valor + delimitador + d.dataHora + delimitador + "%%" + cont;
+                    }
                 });
+                cont++;
+            });
 
-                relatorio = relatorio.Replace("%%" + --cont, Environment.NewLine);
-                var arquivo = configuracao.pastaExportacao + "\\" + nomeArquivo + ".csv";
-                File.WriteAllText(arquivo, relatorio);
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
-            return null;
+            relatorio = relatorio.Replace("%%" + --cont, Environment.NewLine);
+            var arquivo = configuracao.pastaExportacao + "\\" + nomeArquivo + ".csv";
+            File.WriteAllText(arquivo, relatorio);
         }
     }
 }

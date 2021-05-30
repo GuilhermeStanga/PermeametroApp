@@ -5,6 +5,6 @@ namespace PermeametroApp.Servicos.Interfaces
 {
     public interface IRelatorio
     {
-        string Exportar(List<Monitoracao> monitoracoes, Configuracao configuracao, string nomeArquivo);
+        void Exportar(List<Monitoracao> monitoracoes, Configuracao configuracao, string nomeArquivo);
     }
 }
