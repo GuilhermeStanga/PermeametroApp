@@ -27,19 +27,14 @@ namespace PermeametroApp.Servicos
             return port;
         }
 
-        public string FecharPorta(SerialPort port)
+        public void FecharPorta(SerialPort port)
         {
-            try
+            if (port != null)
             {
                 port.Close();
                 port.Dispose();
                 port = null;
-            }catch(Exception ex)
-            {
-                return ex.Message;
             }
-            return null;
-            
         }
         
         public bool PortaEstaAberta(SerialPort port)

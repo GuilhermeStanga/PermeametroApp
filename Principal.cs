@@ -14,7 +14,7 @@ namespace PermeametroApp
         public IServico servico;
         public Configuracao configuracao { get; set; }
 
-        public SerialPort port { get; set; }
+        public SerialPort serialPort { get; set; }
         private bool statusAlter { get; set; }
         private List<Monitoracao> monitoracoes { get; set; }
 
@@ -73,7 +73,7 @@ namespace PermeametroApp
                 foreach (List<HoldingRegisters> escravo in escravos)
                 {
                     int cont = 0;
-                    var dados = servico.ComunicacaoSerial.LerRegistradoresDeEscravo(escravo, port);
+                    var dados = servico.ComunicacaoSerial.LerRegistradoresDeEscravo(escravo, serialPort);
                     escravo.ForEach(es =>
                     {
                         var x = monitoracoes.Where(m => m.registrador == es).Single();
@@ -170,7 +170,14 @@ namespace PermeametroApp
 
         private void butStop_Click(object sender, EventArgs e)
         {
-            Parar();
+            try
+            {
+                Parar();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void butGerarPlanilha_Click(object sender, EventArgs e)
@@ -279,6 +286,9 @@ namespace PermeametroApp
                         });
                     }
                     var retorno = servico.Configuracoes.Salvar(configuracao);
+
+                    servico.ComunicacaoSerial.FecharPorta(serialPort);
+
                     if (retorno != null)
                     {
                         MessageBox.Show("Erro ao salvar configurações, " + retorno, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -410,14 +420,14 @@ namespace PermeametroApp
 
         public void IniciarComunicacaoSerial()
         {
-            if(port == null)
+            if(serialPort == null)
             {
-                port = servico.ComunicacaoSerial.CriarPorta(configuracao);
+                serialPort = servico.ComunicacaoSerial.CriarPorta(configuracao);
             }
 
-            if (!servico.ComunicacaoSerial.PortaEstaAberta(port))
+            if (!servico.ComunicacaoSerial.PortaEstaAberta(serialPort))
             {
-                servico.ComunicacaoSerial.AbrirPorta(port);
+                servico.ComunicacaoSerial.AbrirPorta(serialPort);
             }
         }
 
@@ -435,11 +445,7 @@ namespace PermeametroApp
                 textColeta.Text = "";
             }
 
-            var ret = servico.ComunicacaoSerial.FecharPorta(port);
-            if(ret != null)
-            {
-                MessageBox.Show(ret);
-            }
+            servico.ComunicacaoSerial.FecharPorta(serialPort);
         }
 
         #endregion

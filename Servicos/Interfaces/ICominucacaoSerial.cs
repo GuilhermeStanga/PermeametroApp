@@ -9,7 +9,7 @@ namespace PermeametroApp.Servicos.Interfaces
         SerialPort CriarPorta(Configuracao configuracao);
         void AbrirPorta(SerialPort port);
         bool PortaEstaAberta(SerialPort port);
-        string FecharPorta(SerialPort port);
+        void FecharPorta(SerialPort port);
         ushort[] LerRegistradoresDeEscravo(List<HoldingRegisters> escravo, SerialPort port);
     }
 }
