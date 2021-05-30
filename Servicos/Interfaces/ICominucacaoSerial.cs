@@ -7,7 +7,7 @@ namespace PermeametroApp.Servicos.Interfaces
     public interface ICominucacaoSerial
     {
         SerialPort CriarPorta(Configuracao configuracao);
-        string AbrirPorta(SerialPort port);
+        void AbrirPorta(SerialPort port);
         bool PortaEstaAberta(SerialPort port);
         string FecharPorta(SerialPort port);
         ushort[] LerRegistradoresDeEscravo(List<HoldingRegisters> escravo, SerialPort port);

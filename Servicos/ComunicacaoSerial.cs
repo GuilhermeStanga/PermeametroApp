@@ -11,16 +11,9 @@ namespace PermeametroApp.Servicos
 {
     public class ComunicacaoSerial : ICominucacaoSerial
     {
-        public string AbrirPorta(SerialPort port)
+        public void AbrirPorta(SerialPort port)
         {
-            try
-            {
-                port.Open();
-            }catch(Exception ex)
-            {
-                return ex.Message;
-            }
-            return null;
+            port.Open();
         }
 
         public SerialPort CriarPorta(Configuracao configuracao)

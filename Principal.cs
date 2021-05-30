@@ -68,20 +68,15 @@ namespace PermeametroApp
 
             try
             {
-                var ret = IniciarComunicacaoSerial();
-                if (ret != null)
-                {
-                    MessageBox.Show(ret);
-                    return;
-                }
+                IniciarComunicacaoSerial();
+
                 foreach (List<HoldingRegisters> escravo in escravos)
                 {
                     int cont = 0;
                     var dados = servico.ComunicacaoSerial.LerRegistradoresDeEscravo(escravo, port);
                     escravo.ForEach(es =>
                     {
-                        var x = monitoracoes.
-                                Where(m => m.registrador == es).Single();
+                        var x = monitoracoes.Where(m => m.registrador == es).Single();
 
                         var valor = (dados[cont] * es.multiplicador + es.somador).ToString();
                         var dado = new Dado()
@@ -127,20 +122,16 @@ namespace PermeametroApp
                 MessageBox.Show("Informe um nome para a coleta!");
                 return;
             }
-            var ret = IniciarComunicacaoSerial();
-            if(ret != null)
-            {
-                MessageBox.Show(ret);
-                return;
-            }
-
-            butStart.Enabled = false;
-            butStop.Enabled = true;
-            butGerarPlanilha.Enabled = false;
-            ((Control)this.tabPageConf).Enabled = false;
 
             try
             {
+                IniciarComunicacaoSerial();
+
+                butStart.Enabled = false;
+                butStop.Enabled = true;
+                butGerarPlanilha.Enabled = false;
+                ((Control)this.tabPageConf).Enabled = false;
+
                 while (chartD.Series.Count > 0) { chartD.Series.RemoveAt(0); }
                 while (chartE.Series.Count > 0) { chartE.Series.RemoveAt(0); }
                 var escravos = servico.Configuracoes.GetHoldingRegisters(configuracao);
@@ -417,9 +408,8 @@ namespace PermeametroApp
 
         #region Acoes
 
-        public string IniciarComunicacaoSerial()
+        public void IniciarComunicacaoSerial()
         {
-            string ret = null;
             if(port == null)
             {
                 port = servico.ComunicacaoSerial.CriarPorta(configuracao);
@@ -427,9 +417,8 @@ namespace PermeametroApp
 
             if (!servico.ComunicacaoSerial.PortaEstaAberta(port))
             {
-                ret = servico.ComunicacaoSerial.AbrirPorta(port);
+                servico.ComunicacaoSerial.AbrirPorta(port);
             }
-            return ret;
         }
 
         public void Parar()
