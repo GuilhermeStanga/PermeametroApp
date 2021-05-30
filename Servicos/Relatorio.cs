@@ -28,12 +28,10 @@ namespace PermeametroApp.Servicos
                 m.dado.ForEach(d =>
                 {
                     var ant = cont - 1;
-                    var strAnt = "%%" + ant;
                     var index2 = relatorio.IndexOf("%%" + ant);
                     if (index2 > 0)
                     {
                         var tmp = d.valor + delimitador + d.dataHora + delimitador + "%%" + cont;
-                        var size = "%%" + ant;
                         var relatorioTmp = relatorio.Substring(0, index2) + tmp + relatorio.Substring(index2 + ("%%" + ant).Length);
                         relatorio = relatorioTmp;
                     }

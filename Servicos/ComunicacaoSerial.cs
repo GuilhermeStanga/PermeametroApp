@@ -23,7 +23,7 @@ namespace PermeametroApp.Servicos
             port.DataBits = Int32.Parse(configuracao.dataBits);
             port.Parity = (Parity)Int32.Parse(configuracao.paridade);
             port.StopBits = (StopBits)Int32.Parse(configuracao.stopBit);
-            port.ReadTimeout = 5000; //TODO: Testar
+            port.ReadTimeout = 5000;
             return port;
         }
 

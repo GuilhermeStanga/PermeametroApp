@@ -11,7 +11,7 @@ namespace PermeametroApp
 {
     public partial class Principal : Form
     {
-        public IServico servico;
+        private IServico servico;
         public Configuracao configuracao { get; set; }
         public SerialPort serialPort { get; set; }
         private bool statusAlter { get; set; }
